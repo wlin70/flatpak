@@ -150,7 +150,7 @@ flatpak_builtin_update (int           argc,
     }
 
   transaction = flatpak_transaction_new (dir, opt_yes, opt_no_pull, opt_no_deploy,
-                                         opt_no_static_deltas, !opt_no_deps, !opt_no_related);
+                                         opt_no_static_deltas, !opt_no_deps, !opt_no_related, FALSE);
   kinds = flatpak_kinds_from_bools (opt_app, opt_runtime);
 
   g_print (_("Looking for updates...\n"));

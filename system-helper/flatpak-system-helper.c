@@ -153,6 +153,7 @@ handle_deploy (FlatpakSystemHelper   *object,
   gboolean is_oci;
   gboolean no_deploy;
   gboolean local_pull;
+  gboolean reinstall;
   g_autoptr(GMainContext) main_context = NULL;
   g_autofree char *url = NULL;
 
@@ -181,6 +182,7 @@ handle_deploy (FlatpakSystemHelper   *object,
   is_update = (arg_flags & FLATPAK_HELPER_DEPLOY_FLAGS_UPDATE) != 0;
   no_deploy = (arg_flags & FLATPAK_HELPER_DEPLOY_FLAGS_NO_DEPLOY) != 0;
   local_pull = (arg_flags & FLATPAK_HELPER_DEPLOY_FLAGS_LOCAL_PULL) != 0;
+  reinstall = (arg_flags & FLATPAK_HELPER_DEPLOY_FLAGS_REINSTALL) != 0;
 
   deploy_dir = flatpak_dir_get_if_deployed (system, arg_ref, NULL, NULL);
 
@@ -372,6 +374,7 @@ handle_deploy (FlatpakSystemHelper   *object,
         {
           if (!flatpak_dir_deploy_install (system, arg_ref, arg_origin,
                                            (const char **) arg_subpaths,
+                                           reinstall,
                                            NULL, &error))
             {
               g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_FAILED,

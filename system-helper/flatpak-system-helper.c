@@ -191,18 +191,23 @@ handle_deploy (FlatpakSystemHelper   *object,
       g_autofree char *real_origin = NULL;
       if (!is_update)
         {
-          /* Can't install already installed app */
-          g_dbus_method_invocation_return_error (invocation, FLATPAK_ERROR, FLATPAK_ERROR_ALREADY_INSTALLED,
-                                                 "%s is already installed", arg_ref);
-          return TRUE;
+          if (!reinstall)
+            {
+              /* Can't install already installed app */
+              g_dbus_method_invocation_return_error (invocation, FLATPAK_ERROR, FLATPAK_ERROR_ALREADY_INSTALLED,
+                                                     "%s is already installed", arg_ref);
+              return TRUE;
+            }
         }
-
-      real_origin = flatpak_dir_get_origin (system, arg_ref, NULL, NULL);
-      if (g_strcmp0 (real_origin, arg_origin) != 0)
+      else
         {
-          g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS,
-                                                 "Wrong origin %s for update", arg_origin);
-          return TRUE;
+          real_origin = flatpak_dir_get_origin (system, arg_ref, NULL, NULL);
+          if (g_strcmp0 (real_origin, arg_origin) != 0)
+            {
+              g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS,
+                                                     "Wrong origin %s for update", arg_origin);
+              return TRUE;
+            }
         }
     }
   else if (!deploy_dir && is_update)
